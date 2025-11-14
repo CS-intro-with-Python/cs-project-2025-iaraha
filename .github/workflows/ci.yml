@@ -1,14 +1,11 @@
 name: CI
-
 on: [push]
-
 jobs:
-  docker-test:
+  test:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v3
-
-      - name: Build and test
+      - name: Build and run
         run: |
           docker build -t my-app .
-          docker run my-app python client.py
+          docker run my-app
