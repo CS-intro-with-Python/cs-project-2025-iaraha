@@ -1,10 +1,29 @@
 name: CI
 on: [push]
+
 jobs:
   test:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v3
-      - name: Build and run
+
+      - name: Set up Python
+        uses: actions/setup-python@v4
+        with:
+          python-version: '3.11'
+
+      - name: Build Docker image
+        run: docker build -t my-app .
+
+      - name: Run container
         run: |
-          docker build -t my-app .
+          docker run -d --name my-app-container -p 8080:8080 my-app
+          sleep 3  # даём серверу время подняться
+
+      - name: Test routes with client.py
+        run: |
+          pip install requests
+          python app/client.py
+
+      - name: Stop container
+        run: docker stop my-app-container && docker rm my-app-container
