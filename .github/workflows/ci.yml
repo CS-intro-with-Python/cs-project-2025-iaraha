@@ -10,8 +10,5 @@ jobs:
 
       - name: Build and test
         run: |
-          # 1. Собираем образ
           docker build -t my-app .
-          
-          # 2. Запускаем и тестируем
-          docker run my-app python /app/client.py
+          docker run my-app python client.py
