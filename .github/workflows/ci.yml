@@ -1,0 +1,17 @@
+name: CI
+
+on: [push]
+
+jobs:
+  docker-test:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+
+      - name: Build and test
+        run: |
+          # 1. Собираем образ
+          docker build -t my-app .
+          
+          # 2. Запускаем и тестируем
+          docker run my-app python client.py
