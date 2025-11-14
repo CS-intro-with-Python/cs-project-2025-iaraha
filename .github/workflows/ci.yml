@@ -14,4 +14,4 @@ jobs:
           docker build -t my-app .
           
           # 2. Запускаем и тестируем
-          docker run my-app python client.py
+          docker run my-app python /app/client.py

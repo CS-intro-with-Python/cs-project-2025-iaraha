@@ -14,4 +14,4 @@ RUN pip install -r requirements.txt
 COPY ./app ./app/
 
 #Команда для запуска
-CMD ["python", "app/server.py"]
+CMD ["python", "server.py"]
