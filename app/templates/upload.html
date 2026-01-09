@@ -1,0 +1,37 @@
+{% extends "base.html" %}
+
+{% block title %}Загрузка файла - Медиа Платформа{% endblock %}
+
+{% block content %}
+<div class="row justify-content-center">
+    <div class="col-md-8">
+        <div class="card shadow">
+            <div class="card-body">
+                <h3 class="card-title text-center mb-4">Загрузить файл</h3>
+
+                {% if error %}
+                <div class="alert alert-danger">{{ error }}</div>
+                {% endif %}
+
+                <form method="post" enctype="multipart/form-data">
+                    <div class="mb-3">
+                        <label class="form-label">Название поста</label>
+                        <input type="text" name="title" class="form-control" placeholder="Мой крутой файл"
+                               value="{{ request.form.title if request.form.title }}">
+                    </div>
+
+                    <div class="mb-3">
+                        <label class="form-label">Выберите файл</label>
+                        <input type="file" name="file" class="form-control" required>
+                        <div class="form-text">
+                            Поддерживаются: JPG, PNG, GIF, MP4, AVI, MOV, PDF, TXT, DOC, DOCX
+                        </div>
+                    </div>
+
+                    <button type="submit" class="btn btn-primary w-100">Загрузить</button>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

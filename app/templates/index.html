@@ -1,0 +1,66 @@
+{% extends "base.html" %}
+
+{% block title %}Главная - Медиа Платформа{% endblock %}
+
+{% block content %}
+<h2 class="mb-4">Главная стенка</h2>
+
+{% if not posts %}
+    <div class="alert alert-info">
+        Пока нет постов. <a href="{{ url_for('upload') }}">Будь первым!</a>
+    </div>
+{% else %}
+    <div class="row">
+        {% for post in posts %}
+        <div class="col-md-6 col-lg-4 mb-4">
+            <a href="{{ url_for('view_post', post_id=post.id) }}"
+               class="text-decoration-none text-dark">
+                <div class="card post-card h-100 shadow-sm">
+                    <!-- Превью файла -->
+                    <div class="card-img-top text-center p-3 bg-light">
+                        {% if post.filename.lower().endswith(('.jpg', '.jpeg', '.png', '.gif')) %}
+                            <img src="{{ url_for('uploaded_file', filename=post.filename) }}"
+                                 class="img-fluid rounded"
+                                 style="height: 180px; width: 100%; object-fit: cover;">
+                        {% elif post.filename.lower().endswith(('.mp4', '.avi', '.mov')) %}
+                            <div class="file-icon" style="font-size: 60px;">🎬</div>
+                            <small>Видео</small>
+                        {% elif post.filename.lower().endswith('.pdf') %}
+                            <div class="file-icon" style="font-size: 60px;">📄</div>
+                            <small>PDF документ</small>
+                        {% else %}
+                            <div class="file-icon" style="font-size: 60px;">📁</div>
+                            <small>Файл</small>
+                        {% endif %}
+                    </div>
+
+                    <div class="card-body">
+                        <h5 class="card-title">{{ post.title[:50] }}{% if post.title|length > 50 %}...{% endif %}</h5>
+
+                        <div class="d-flex justify-content-between align-items-center mt-3">
+                            <div>
+                                <small class="text-muted">
+                                    <strong>👤 {{ post.user.username }}</strong><br>
+                                    📅 {{ post.created_at.strftime('%d.%m.%Y') }}
+                                </small>
+                            </div>
+
+                            <div class="text-end">
+                                <span class="badge bg-primary rounded-pill">
+                                    👍 {{ post.likes }}
+                                </span>
+                                {% if post.comment_count > 0 %}
+                                <span class="badge bg-secondary rounded-pill ms-1">
+                                    💬 {{ post.comment_count }}
+                                </span>
+                                {% endif %}
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </a>
+        </div>
+        {% endfor %}
+    </div>
+{% endif %}
+{% endblock %}

@@ -1,0 +1,134 @@
+{% extends "base.html" %}
+
+{% block title %}{{ post.title }} - Медиа Платформа{% endblock %}
+
+{% block content %}
+<div class="row">
+    <div class="col-lg-8 mx-auto">
+        <!-- Пост -->
+        <div class="card shadow mb-4">
+            <div class="card-body">
+                <!-- Заголовок и автор -->
+                <div class="d-flex justify-content-between align-items-start mb-3">
+                    <div>
+                        <h2>{{ post.title }}</h2>
+                        <p class="text-muted mb-0">
+                            👤 {{ post.user.username }} |
+                            📅 {{ post.created_at.strftime('%d.%m.%Y %H:%M') }}
+                        </p>
+                    </div>
+
+                    {% if current_user.is_authenticated and (current_user.is_admin or current_user.id == post.user_id) %}
+                    <form action="{{ url_for('delete_post', post_id=post.id) }}" method="post"
+                          onsubmit="return confirm('Удалить этот пост?')">
+                        <button type="submit" class="btn btn-sm btn-outline-danger">🗑️ Удалить</button>
+                    </form>
+                    {% endif %}
+                </div>
+
+                <!-- Файл -->
+                <div class="text-center my-4">
+                    {% if post.filename.lower().endswith(('.jpg', '.jpeg', '.png', '.gif')) %}
+                        <img src="{{ url_for('uploaded_file', filename=post.filename) }}"
+                             class="img-fluid rounded shadow"
+                             style="max-height: 600px;">
+
+                    {% elif post.filename.lower().endswith(('.mp4', '.avi', '.mov')) %}
+                        <video controls class="w-100 rounded shadow">
+                            <source src="{{ url_for('uploaded_file', filename=post.filename) }}">
+                            Ваш браузер не поддерживает видео.
+                        </video>
+
+                    {% elif post.filename.lower().endswith('.pdf') %}
+                        <div class="border rounded shadow p-3">
+                            <embed src="{{ url_for('uploaded_file', filename=post.filename) }}"
+                                   class="w-100" height="500" type="application/pdf">
+                        </div>
+
+                    {% else %}
+                        <div class="alert alert-info p-4">
+                            <div class="file-icon" style="font-size: 80px;">📁</div>
+                            <h4>{{ post.filename }}</h4>
+                            <a href="{{ url_for('uploaded_file', filename=post.filename) }}"
+                               class="btn btn-primary mt-3" download>
+                                📥 Скачать файл
+                            </a>
+                        </div>
+                    {% endif %}
+                </div>
+
+                <!-- Действия: лайк и скачать -->
+                <div class="d-flex justify-content-between align-items-center border-top pt-3 mt-3">
+                    <div>
+                        <form action="{{ url_for('like', post_id=post.id) }}" method="post" class="d-inline">
+                            <button class="btn {% if user_liked %}btn-danger{% else %}btn-outline-primary{% endif %} btn-lg">
+                                👍 {{ post.likes }}
+                            </button>
+                        </form>
+
+                        <span class="ms-3 text-muted">
+                            {% if user_liked %}Вы лайкнули этот пост{% else %}Поставьте лайк{% endif %}
+                        </span>
+                    </div>
+
+                    <a href="{{ url_for('uploaded_file', filename=post.filename) }}"
+                       class="btn btn-success btn-lg" download>
+                        📥 Скачать
+                    </a>
+                </div>
+            </div>
+        </div>
+
+        <!-- Комментарии -->
+        <div class="card shadow">
+            <div class="card-body">
+                <h4 class="mb-4">💬 Комментарии ({{ comments|length }})</h4>
+
+                {% if not comments %}
+                    <div class="alert alert-info">Комментариев пока нет. Будьте первым!</div>
+                {% else %}
+                    {% for comment in comments %}
+                    <div class="card mb-3 border-light">
+                        <div class="card-body">
+                            <div class="d-flex justify-content-between">
+                                <div>
+                                    <strong class="h6 mb-0">{{ comment.user.username }}</strong>
+                                    {% if comment.user.is_admin %}
+                                    <span class="badge bg-danger ms-1">ADMIN</span>
+                                    {% endif %}
+                                </div>
+                                <small class="text-muted">{{ comment.created_at.strftime('%d.%m.%Y %H:%M') }}</small>
+                            </div>
+                            <p class="mb-0 mt-2">{{ comment.text }}</p>
+                        </div>
+                    </div>
+                    {% endfor %}
+                {% endif %}
+
+                <!-- Форма комментария -->
+                {% if current_user.is_authenticated %}
+                <div class="mt-4 pt-3 border-top">
+                    <h5>Добавить комментарий</h5>
+                    <form method="post" action="{{ url_for('add_comment', post_id=post.id) }}">
+                        <textarea name="text" class="form-control mb-3" rows="3"
+                                  placeholder="Напишите ваш комментарий..." required></textarea>
+                        <button type="submit" class="btn btn-primary">Отправить комментарий</button>
+                    </form>
+                </div>
+                {% else %}
+                <div class="alert alert-warning mt-4">
+                    <a href="{{ url_for('login') }}" class="alert-link">Войдите</a>, чтобы оставлять комментарии
+                </div>
+                {% endif %}
+            </div>
+        </div>
+
+        <!-- Назад -->
+        <div class="mt-4 text-center">
+            <a href="{{ url_for('index') }}" class="btn btn-outline-secondary">
+                ← Назад ко всем постам
+            </a>
+        </div>
+    </div>
+</div>
+{% endblock %}
