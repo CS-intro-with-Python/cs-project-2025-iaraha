@@ -28,8 +28,8 @@ A modern web application for sharing media files with user authentication, socia
 ### Local Setup
 1. **Clone the repository:**
    ```bash
-   git clone <git@github.com:CS-intro-with-Python/cs-project-2025-iaraha.git>
-   cd cs-project-2025-laraha
+   git clone git@github.com:CS-intro-with-Python/cs-project-2025-iaraha.git
+   cd cs-project-2025-iaraha
    ```
 
 2. **Install dependencies:**
@@ -40,7 +40,7 @@ A modern web application for sharing media files with user authentication, socia
 3. **Run the application:**
    ```bash
    cd app
-   python app.py
+   python3 app.py
    ```
    *Access at: http://localhost:8080*
 
